@@ -1,0 +1,43 @@
+# CMake build folders
+/build/
+/out/
+/bin/
+/CMakeFiles/
+/CMakeCache.txt
+/Makefile
+/*.cmake
+/install_manifest.txt
+/Testing/
+compile_commands.json
+/.cache/
+
+# Visual Studio / IDE-specific
+*.vcxproj*
+*.sln
+*.user
+*.opensdf
+*.VC.db
+
+# macOS and Linux system files
+.DS_Store
+*.swp
+
+# Log/output files
+*.log
+
+# Executables and object files
+*.o
+*.obj
+*.so
+*.dll
+*.exe
+*.a
+*.lib
+
+# Dependency artifacts
+lib/
+
+# Other temp files
+*.tmp
+*.bak
+
