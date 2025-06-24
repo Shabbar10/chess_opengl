@@ -5,6 +5,7 @@ class SpriteSheet;
 class Shader;
 
 #include <glm/glm.hpp>
+#include <iostream>
 #include <vector>
 
 enum class PieceType { Pawn, Knight, Rook, Bishop, Queen, King };
@@ -21,6 +22,16 @@ public:
   virtual std::vector<glm::ivec2> getValidMoves(Board &board) = 0;
   virtual void render(SpriteSheet &sheet, Shader &shader) = 0;
   bool checkifWhite();
+  glm::ivec2 getBoardPos();
+
+  friend std::ostream &operator<<(std::ostream &os, const Piece &piece) {
+    os << "Piece Type: " << static_cast<int>(piece.type) << ", Position: ("
+       << piece.boardPos.x << ", " << piece.boardPos.y << ")"
+       << ", Color: " << (piece.isWhite ? "White" : "Black") << ", UV0: ("
+       << piece.u0 << ", " << piece.v0 << ")"
+       << ", UV1: (" << piece.u1 << ", " << piece.v1 << ")";
+    return os;
+  }
 };
 
 class Pawn : public Piece {

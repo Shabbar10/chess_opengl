@@ -60,6 +60,21 @@ int main() {
 #endif
 
   Board board;
+  glfwSetWindowUserPointer(window, &board);
+
+  // Mouse button callback
+  glfwSetMouseButtonCallback(
+      window, [](GLFWwindow *win, int button, int action, int) {
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+          double x, y;
+          glfwGetCursorPos(win, &x, &y);
+
+          Board *board = static_cast<Board *>(glfwGetWindowUserPointer(win));
+          if (board)
+            board->handleClick(static_cast<float>(x), static_cast<float>(y));
+        }
+      });
+
   SpriteSheet blackSheet("chess_sprites/16x16_pieces/BlackPieces.png");
   SpriteSheet whiteSheet("chess_sprites/16x16_pieces/WhitePieces.png");
 
@@ -75,8 +90,8 @@ int main() {
   pieceShader.setInt("uTexture", 0);
   pieceShader.setMat4("uProjection", projection);
 
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  // glEnable(GL_BLEND);
+  // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   while (!glfwWindowShouldClose(window)) {
     processInput(window);
@@ -85,7 +100,7 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     boardShader.use();
-    board.render(blackSheet, whiteSheet, pieceShader);
+    board.render(blackSheet, whiteSheet, pieceShader, projection);
 
     glfwSwapBuffers(window);
     glfwPollEvents();

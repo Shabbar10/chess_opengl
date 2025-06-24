@@ -4,7 +4,6 @@
 #include <iostream>
 
 SpriteSheet::SpriteSheet(const std::string &path) {
-  std::cout << "Loaded " << path << std::endl;
   glGenTextures(1, &textureID);
   glBindTexture(GL_TEXTURE_2D, textureID);
 

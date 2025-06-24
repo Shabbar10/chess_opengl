@@ -3,6 +3,7 @@
 #include "Shader.h"
 #include "SpriteSheet.h"
 #include <algorithm>
+#include <cstdint>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <tuple>
@@ -16,19 +17,38 @@ Piece::Piece(glm::ivec2 pos, bool white, PieceType type, SpriteSheet &sheet)
 
 bool Piece::checkifWhite() { return isWhite; }
 
+glm::ivec2 Piece::getBoardPos() { return boardPos; }
+
 std::vector<glm::ivec2> Pawn::getValidMoves(Board &board) {
+  // Now check if there is an enemy piece at the diagonals
+  int moveDirection = isWhite ? -1 : 1;
+  std::cout << "Move Direction: " << moveDirection << std::endl;
+
   std::vector<glm::ivec2> potentialMoves{
-      boardPos + glm::ivec2{-1, 0},  // 1 forward
-      boardPos + glm::ivec2{-1, -1}, // diagonal left
-      boardPos + glm::ivec2{-1, 1}   // diagonal right
+      boardPos + glm::ivec2{0, moveDirection}, // 1 forward
   };
 
-  potentialMoves.erase(
-      std::remove_if(potentialMoves.begin(), potentialMoves.end(),
-                     [&](const glm::ivec2 &move) {
-                       return board.isOutOfBounds() || !board.isValidMove();
-                     }),
-      potentialMoves.end());
+  // x is column, y is row
+  glm::ivec2 left = boardPos + glm::ivec2{-1, moveDirection};
+  if (!board.isOutOfBounds(left)) {
+    Piece *leftDiagonal = board.getPieceAt(left.x, left.y);
+    if (leftDiagonal != nullptr && !leftDiagonal->checkifWhite())
+      potentialMoves.push_back(boardPos + glm::ivec2{moveDirection, -1});
+  }
+
+  glm::ivec2 right = boardPos + glm::ivec2{1, moveDirection};
+  if (!board.isOutOfBounds(right)) {
+    Piece *rightDiagonal = board.getPieceAt(right.x, right.y);
+    if (rightDiagonal != nullptr && !rightDiagonal->checkifWhite())
+      potentialMoves.push_back(boardPos + glm::ivec2{moveDirection, 1});
+  }
+
+  potentialMoves.erase(std::remove_if(potentialMoves.begin(),
+                                      potentialMoves.end(),
+                                      [&](const glm::ivec2 &move) {
+                                        return board.isOutOfBounds(move);
+                                      }),
+                       potentialMoves.end());
 
   return potentialMoves;
 }
@@ -36,7 +56,7 @@ std::vector<glm::ivec2> Pawn::getValidMoves(Board &board) {
 void Pawn::render(SpriteSheet &sheet, Shader &shader) {
   // Calculate screen space coordinates
   float screenX = boardPos.x * SQUARE_SIZE;
-  float screenY = boardPos.y * SQUARE_SIZE;
+  float screenY = (7 - boardPos.y) * SQUARE_SIZE;
 
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation
@@ -62,12 +82,12 @@ std::vector<glm::ivec2> Rook::getValidMoves(Board &board) {
       boardPos + glm::ivec2{-1, 1}   // diagonal right
   };
 
-  potentialMoves.erase(
-      std::remove_if(potentialMoves.begin(), potentialMoves.end(),
-                     [&](const glm::ivec2 &move) {
-                       return board.isOutOfBounds() || !board.isValidMove();
-                     }),
-      potentialMoves.end());
+  potentialMoves.erase(std::remove_if(potentialMoves.begin(),
+                                      potentialMoves.end(),
+                                      [&](const glm::ivec2 &move) {
+                                        return board.isOutOfBounds(move);
+                                      }),
+                       potentialMoves.end());
 
   return potentialMoves;
 }
@@ -75,7 +95,7 @@ std::vector<glm::ivec2> Rook::getValidMoves(Board &board) {
 void Rook::render(SpriteSheet &sheet, Shader &shader) {
   // Calculate screen space coordinates
   float screenX = boardPos.x * SQUARE_SIZE;
-  float screenY = boardPos.y * SQUARE_SIZE;
+  float screenY = (7 - boardPos.y) * SQUARE_SIZE;
 
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation
@@ -101,12 +121,12 @@ std::vector<glm::ivec2> Bishop::getValidMoves(Board &board) {
       boardPos + glm::ivec2{-1, 1}   // diagonal right
   };
 
-  potentialMoves.erase(
-      std::remove_if(potentialMoves.begin(), potentialMoves.end(),
-                     [&](const glm::ivec2 &move) {
-                       return board.isOutOfBounds() || !board.isValidMove();
-                     }),
-      potentialMoves.end());
+  potentialMoves.erase(std::remove_if(potentialMoves.begin(),
+                                      potentialMoves.end(),
+                                      [&](const glm::ivec2 &move) {
+                                        return board.isOutOfBounds(move);
+                                      }),
+                       potentialMoves.end());
 
   return potentialMoves;
 }
@@ -114,7 +134,7 @@ std::vector<glm::ivec2> Bishop::getValidMoves(Board &board) {
 void Bishop::render(SpriteSheet &sheet, Shader &shader) {
   // Calculate screen space coordinates
   float screenX = boardPos.x * SQUARE_SIZE;
-  float screenY = boardPos.y * SQUARE_SIZE;
+  float screenY = (7 - boardPos.y) * SQUARE_SIZE;
 
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation
@@ -140,12 +160,12 @@ std::vector<glm::ivec2> Knight::getValidMoves(Board &board) {
       boardPos + glm::ivec2{-1, 1}   // diagonal right
   };
 
-  potentialMoves.erase(
-      std::remove_if(potentialMoves.begin(), potentialMoves.end(),
-                     [&](const glm::ivec2 &move) {
-                       return board.isOutOfBounds() || !board.isValidMove();
-                     }),
-      potentialMoves.end());
+  potentialMoves.erase(std::remove_if(potentialMoves.begin(),
+                                      potentialMoves.end(),
+                                      [&](const glm::ivec2 &move) {
+                                        return board.isOutOfBounds(move);
+                                      }),
+                       potentialMoves.end());
 
   return potentialMoves;
 }
@@ -153,7 +173,7 @@ std::vector<glm::ivec2> Knight::getValidMoves(Board &board) {
 void Knight::render(SpriteSheet &sheet, Shader &shader) {
   // Calculate screen space coordinates
   float screenX = boardPos.x * SQUARE_SIZE;
-  float screenY = boardPos.y * SQUARE_SIZE;
+  float screenY = (7 - boardPos.y) * SQUARE_SIZE;
 
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation
@@ -179,12 +199,12 @@ std::vector<glm::ivec2> Queen::getValidMoves(Board &board) {
       boardPos + glm::ivec2{-1, 1}   // diagonal right
   };
 
-  potentialMoves.erase(
-      std::remove_if(potentialMoves.begin(), potentialMoves.end(),
-                     [&](const glm::ivec2 &move) {
-                       return board.isOutOfBounds() || !board.isValidMove();
-                     }),
-      potentialMoves.end());
+  potentialMoves.erase(std::remove_if(potentialMoves.begin(),
+                                      potentialMoves.end(),
+                                      [&](const glm::ivec2 &move) {
+                                        return board.isOutOfBounds(move);
+                                      }),
+                       potentialMoves.end());
 
   return potentialMoves;
 }
@@ -192,7 +212,7 @@ std::vector<glm::ivec2> Queen::getValidMoves(Board &board) {
 void Queen::render(SpriteSheet &sheet, Shader &shader) {
   // Calculate screen space coordinates
   float screenX = boardPos.x * SQUARE_SIZE;
-  float screenY = boardPos.y * SQUARE_SIZE;
+  float screenY = (7 - boardPos.y) * SQUARE_SIZE;
 
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation
@@ -218,12 +238,12 @@ std::vector<glm::ivec2> King::getValidMoves(Board &board) {
       boardPos + glm::ivec2{-1, 1}   // diagonal right
   };
 
-  potentialMoves.erase(
-      std::remove_if(potentialMoves.begin(), potentialMoves.end(),
-                     [&](const glm::ivec2 &move) {
-                       return board.isOutOfBounds() || !board.isValidMove();
-                     }),
-      potentialMoves.end());
+  potentialMoves.erase(std::remove_if(potentialMoves.begin(),
+                                      potentialMoves.end(),
+                                      [&](const glm::ivec2 &move) {
+                                        return board.isOutOfBounds(move);
+                                      }),
+                       potentialMoves.end());
 
   return potentialMoves;
 }
@@ -231,7 +251,7 @@ std::vector<glm::ivec2> King::getValidMoves(Board &board) {
 void King::render(SpriteSheet &sheet, Shader &shader) {
   // Calculate screen space coordinates
   float screenX = boardPos.x * SQUARE_SIZE;
-  float screenY = boardPos.y * SQUARE_SIZE;
+  float screenY = (7 - boardPos.y) * SQUARE_SIZE;
 
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation
