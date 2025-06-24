@@ -23,6 +23,7 @@ public:
   virtual void render(SpriteSheet &sheet, Shader &shader) = 0;
   bool checkifWhite();
   glm::ivec2 getBoardPos();
+  void setBoardPos(const glm::ivec2 to);
 
   friend std::ostream &operator<<(std::ostream &os, const Piece &piece) {
     os << "Piece Type: " << static_cast<int>(piece.type) << ", Position: ("
@@ -35,6 +36,9 @@ public:
 };
 
 class Pawn : public Piece {
+private:
+  bool firstMove = true;
+
 public:
   using Piece::Piece; // Use Piece's constructor
 

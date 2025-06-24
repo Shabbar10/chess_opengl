@@ -11,7 +11,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
-#include <vector>
 
 #include <Shader.h>
 #define STB_IMAGE_IMPLEMENTATION
@@ -76,7 +75,7 @@ int main() {
       });
 
   SpriteSheet blackSheet("chess_sprites/16x16_pieces/BlackPieces.png");
-  SpriteSheet whiteSheet("chess_sprites/16x16_pieces/WhitePieces.png");
+  SpriteSheet whiteSheet("chess_sprites/16x16_pieces/WhitePieces_Wood.png");
 
   board.initializeBoard(blackSheet, whiteSheet);
   blackSheet.initQuad();

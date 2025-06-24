@@ -22,6 +22,8 @@ private:
   unsigned int highlightVAO;
   unsigned int highlightVBO;
   unsigned int highlightEBO;
+  bool highlighted = false;
+  Piece *clickedPiece;
 
   void generateVertices();
   void renderHighlightedSquares(glm::mat4 projection);

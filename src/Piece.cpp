@@ -3,7 +3,6 @@
 #include "Shader.h"
 #include "SpriteSheet.h"
 #include <algorithm>
-#include <cstdint>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <tuple>
@@ -19,28 +18,51 @@ bool Piece::checkifWhite() { return isWhite; }
 
 glm::ivec2 Piece::getBoardPos() { return boardPos; }
 
+void Piece::setBoardPos(const glm::ivec2 to) { boardPos = to; }
+
 std::vector<glm::ivec2> Pawn::getValidMoves(Board &board) {
-  // Now check if there is an enemy piece at the diagonals
   int moveDirection = isWhite ? -1 : 1;
-  std::cout << "Move Direction: " << moveDirection << std::endl;
 
   std::vector<glm::ivec2> potentialMoves{
       boardPos + glm::ivec2{0, moveDirection}, // 1 forward
   };
 
-  // x is column, y is row
-  glm::ivec2 left = boardPos + glm::ivec2{-1, moveDirection};
-  if (!board.isOutOfBounds(left)) {
-    Piece *leftDiagonal = board.getPieceAt(left.x, left.y);
-    if (leftDiagonal != nullptr && !leftDiagonal->checkifWhite())
-      potentialMoves.push_back(boardPos + glm::ivec2{moveDirection, -1});
+  if (firstMove) {
+    potentialMoves.push_back(boardPos + glm::ivec2{0, 2 * moveDirection});
+    firstMove = false;
   }
 
-  glm::ivec2 right = boardPos + glm::ivec2{1, moveDirection};
-  if (!board.isOutOfBounds(right)) {
-    Piece *rightDiagonal = board.getPieceAt(right.x, right.y);
-    if (rightDiagonal != nullptr && !rightDiagonal->checkifWhite())
-      potentialMoves.push_back(boardPos + glm::ivec2{moveDirection, 1});
+  // x is column, y is row
+  if (isWhite) {
+    glm::ivec2 left = boardPos + glm::ivec2{-1, moveDirection};
+    if (!board.isOutOfBounds(left)) {
+      Piece *leftDiagonal = board.getPieceAt(left.x, left.y);
+
+      // Check if the leftDiagonal is black (to attack)
+      if (leftDiagonal != nullptr && !leftDiagonal->checkifWhite())
+        potentialMoves.push_back(boardPos + glm::ivec2{-1, moveDirection});
+    }
+
+    glm::ivec2 right = boardPos + glm::ivec2{1, moveDirection};
+    if (!board.isOutOfBounds(right)) {
+      Piece *rightDiagonal = board.getPieceAt(right.x, right.y);
+      if (rightDiagonal != nullptr && !rightDiagonal->checkifWhite())
+        potentialMoves.push_back(boardPos + glm::ivec2{1, moveDirection});
+    }
+  } else {
+    glm::ivec2 left = boardPos + glm::ivec2{-1, moveDirection};
+    if (!board.isOutOfBounds(left)) {
+      Piece *leftDiagonal = board.getPieceAt(left.x, left.y);
+      if (leftDiagonal != nullptr && leftDiagonal->checkifWhite())
+        potentialMoves.push_back(boardPos + glm::ivec2{-1, moveDirection});
+    }
+
+    glm::ivec2 right = boardPos + glm::ivec2{1, moveDirection};
+    if (!board.isOutOfBounds(right)) {
+      Piece *rightDiagonal = board.getPieceAt(right.x, right.y);
+      if (rightDiagonal != nullptr && rightDiagonal->checkifWhite())
+        potentialMoves.push_back(boardPos + glm::ivec2{1, moveDirection});
+    }
   }
 
   potentialMoves.erase(std::remove_if(potentialMoves.begin(),
@@ -154,11 +176,7 @@ void Bishop::render(SpriteSheet &sheet, Shader &shader) {
 }
 
 std::vector<glm::ivec2> Knight::getValidMoves(Board &board) {
-  std::vector<glm::ivec2> potentialMoves{
-      boardPos + glm::ivec2{-1, 0},  // 1 forward
-      boardPos + glm::ivec2{-1, -1}, // diagonal left
-      boardPos + glm::ivec2{-1, 1}   // diagonal right
-  };
+  std::vector<glm::ivec2> potentialMoves;
 
   potentialMoves.erase(std::remove_if(potentialMoves.begin(),
                                       potentialMoves.end(),

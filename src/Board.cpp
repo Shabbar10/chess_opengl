@@ -3,6 +3,7 @@
 #include "Shader.h"
 #include "SpriteSheet.h"
 #include "glm/gtc/matrix_transform.hpp"
+#include <algorithm>
 #include <glad/glad.h>
 #include <memory>
 
@@ -166,29 +167,18 @@ void Board::renderHighlightedSquares(glm::mat4 projection) {
     float screenY = (7 - move.y) * squareSize;
 
     // Fill the rest of the vertices of the quad
-    std::vector<float> vertices = {screenX,
-                                   screenY,
-                                   1.0f,
-                                   1.0f,
-                                   0.0f,
+    std::vector<float> vertices = {
+        // Bottom left
+        screenX + 5, screenY + 5, 1.0f, 1.0f, 0.0f,
 
-                                   screenX + squareSize,
-                                   screenY,
-                                   1.0f,
-                                   1.0f,
-                                   0.0f,
+        // Bottom right
+        screenX + squareSize - 5, screenY + 5, 1.0f, 1.0f, 0.0f,
 
-                                   screenX + squareSize,
-                                   screenY + squareSize,
-                                   1.0f,
-                                   1.0f,
-                                   0.0f,
+        // Top right
+        screenX + squareSize - 5, screenY + squareSize - 5, 1.0f, 1.0f, 0.0f,
 
-                                   screenX,
-                                   screenY + squareSize,
-                                   1.0f,
-                                   1.0f,
-                                   0.0f};
+        // Top left
+        screenX + 5, screenY + squareSize - 5, 1.0f, 1.0f, 0.0f};
 
     glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(float),
                     vertices.data());
@@ -208,21 +198,38 @@ void Board::handleClick(float x, float y) {
   int gridCol = x / squareSize, gridRow = y / squareSize;
   std::cout << "X: " << gridCol << ", Y: " << gridRow << std::endl << std::endl;
 
-  Piece *clickedPiece = getPieceAt(gridCol, gridRow);
-  if (clickedPiece) {
-    std::cout << *clickedPiece << std::endl;
-    highlightedSquares = clickedPiece->getValidMoves(*this);
-    std::cout << "Piece board position: " << clickedPiece->getBoardPos().x
-              << " " << clickedPiece->getBoardPos().y << std::endl;
-    std::cout << "Valid moves:\n";
-    for (const auto &move : highlightedSquares) {
-      std::cout << move.x << " " << move.y << std::endl;
-    }
+  if (highlighted) {
+    const glm::ivec2 move{gridCol, gridRow};
 
-    // TODO render squares
+    auto it =
+        std::find(highlightedSquares.begin(), highlightedSquares.end(), move);
+
+    std::cout << "Current board pos: " << clickedPiece->getBoardPos().x << " "
+              << clickedPiece->getBoardPos().y << std::endl;
+
+    std::cout << "Moving to: " << move.x << " " << move.y << std::endl;
+
+    if (it != highlightedSquares.end()) {
+      movePiece(clickedPiece->getBoardPos(), move);
+
+      highlighted = false;
+      highlightedSquares.clear();
+    }
   } else {
-    std::cout << "No piece clicked\n";
-    highlightedSquares.clear();
+    clickedPiece = getPieceAt(gridCol, gridRow);
+    if (clickedPiece) {
+      std::cout << *clickedPiece << std::endl;
+      highlightedSquares = clickedPiece->getValidMoves(*this);
+      highlighted = true;
+
+      for (const auto &move : highlightedSquares) {
+        std::cout << move.x << " " << move.y << std::endl;
+      }
+    } else {
+      std::cout << "No piece clicked\n";
+      highlightedSquares.clear();
+      highlighted = false;
+    }
   }
 }
 
@@ -237,3 +244,10 @@ bool Board::isOutOfBounds(const glm::ivec2 &move) {
 }
 
 Piece *Board::getPieceAt(int x, int y) const { return grid[y][x]; }
+
+void Board::movePiece(glm::ivec2 from, glm::ivec2 to) {
+  Piece *piece = grid[from.y][from.x];
+  grid[to.y][to.x] = grid[from.y][from.x];
+  grid[from.y][from.x] = nullptr;
+  piece->setBoardPos(to);
+}
