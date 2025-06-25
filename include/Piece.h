@@ -19,11 +19,13 @@ protected:
 
 public:
   Piece(glm::ivec2 pos, bool white, PieceType type, SpriteSheet &sheet);
+  virtual ~Piece() = default;
   virtual std::vector<glm::ivec2> getValidMoves(Board &board) = 0;
   virtual void render(SpriteSheet &sheet, Shader &shader) = 0;
   bool checkifWhite();
   glm::ivec2 getBoardPos();
   void setBoardPos(const glm::ivec2 to);
+  PieceType getType();
 
   friend std::ostream &operator<<(std::ostream &os, const Piece &piece) {
     os << "Piece Type: " << static_cast<int>(piece.type) << ", Position: ("

@@ -2,7 +2,6 @@
 #include "Piece.h"
 #include "Shader.h"
 #include "SpriteSheet.h"
-#include "glm/gtc/matrix_transform.hpp"
 #include <algorithm>
 #include <glad/glad.h>
 #include <memory>
@@ -191,12 +190,7 @@ void Board::renderHighlightedSquares(glm::mat4 projection) {
 }
 
 void Board::handleClick(float x, float y) {
-  std::cout << "Screen coordinates:\n";
-  std::cout << "X: " << x << ", Y: " << y << std::endl << std::endl;
-
-  std::cout << "Grid coordinates:\n";
   int gridCol = x / squareSize, gridRow = y / squareSize;
-  std::cout << "X: " << gridCol << ", Y: " << gridRow << std::endl << std::endl;
 
   if (highlighted) {
     const glm::ivec2 move{gridCol, gridRow};
@@ -204,26 +198,23 @@ void Board::handleClick(float x, float y) {
     auto it =
         std::find(highlightedSquares.begin(), highlightedSquares.end(), move);
 
-    std::cout << "Current board pos: " << clickedPiece->getBoardPos().x << " "
-              << clickedPiece->getBoardPos().y << std::endl;
-
-    std::cout << "Moving to: " << move.x << " " << move.y << std::endl;
-
-    if (it != highlightedSquares.end()) {
+    if (it != highlightedSquares.end())
       movePiece(clickedPiece->getBoardPos(), move);
 
-      highlighted = false;
-      highlightedSquares.clear();
-    }
+    highlighted = false;
+    highlightedSquares.clear();
   } else {
     clickedPiece = getPieceAt(gridCol, gridRow);
     if (clickedPiece) {
-      std::cout << *clickedPiece << std::endl;
-      highlightedSquares = clickedPiece->getValidMoves(*this);
-      highlighted = true;
-
-      for (const auto &move : highlightedSquares) {
-        std::cout << move.x << " " << move.y << std::endl;
+      if ((whiteTurn && clickedPiece->checkifWhite()) ||
+          (!whiteTurn && !clickedPiece->checkifWhite())) {
+        std::cout << *clickedPiece << std::endl;
+        highlightedSquares = clickedPiece->getValidMoves(*this);
+        highlighted = true;
+        whiteTurn = !whiteTurn;
+      } else {
+        std::string turn = whiteTurn ? "White's" : "Black's";
+        std::cout << "It is " << turn << " turn\n";
       }
     } else {
       std::cout << "No piece clicked\n";
@@ -246,8 +237,19 @@ bool Board::isOutOfBounds(const glm::ivec2 &move) {
 Piece *Board::getPieceAt(int x, int y) const { return grid[y][x]; }
 
 void Board::movePiece(glm::ivec2 from, glm::ivec2 to) {
-  Piece *piece = grid[from.y][from.x];
+  Piece *movingPiece = grid[from.y][from.x];
+  Piece *targetPiece = grid[to.y][to.x];
+
+  if (targetPiece) {
+    if (targetPiece->getType() == PieceType::King)
+      hasWon = true;
+
+    delete targetPiece;
+  }
+
   grid[to.y][to.x] = grid[from.y][from.x];
   grid[from.y][from.x] = nullptr;
-  piece->setBoardPos(to);
+  movingPiece->setBoardPos(to);
 }
+
+bool Board::checkIfWon() { return hasWon; }

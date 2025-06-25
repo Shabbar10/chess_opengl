@@ -15,15 +15,18 @@ private:
   std::vector<float> vertices;
   std::vector<unsigned int> indices;
   unsigned int squareSize = 100;
+
   unsigned int VAO, VBO, EBO;
-  bool whiteMove;
   std::vector<glm::ivec2> highlightedSquares;
   std::unique_ptr<Shader> highlightShader;
   unsigned int highlightVAO;
   unsigned int highlightVBO;
   unsigned int highlightEBO;
   bool highlighted = false;
+
   Piece *clickedPiece;
+  bool hasWon = false;
+  bool whiteTurn = true;
 
   void generateVertices();
   void renderHighlightedSquares(glm::mat4 projection);
@@ -39,4 +42,5 @@ public:
   void handleClick(float x, float y);
   void movePiece(glm::ivec2 from, glm::ivec2 to);
   bool isOutOfBounds(const glm::ivec2 &move);
+  bool checkIfWon();
 };
