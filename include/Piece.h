@@ -46,6 +46,7 @@ public:
 
   std::vector<glm::ivec2> getValidMoves(Board &board) override;
   void render(SpriteSheet &sheet, Shader &shader) override;
+  void firstMoveFalse();
 };
 
 class Rook : public Piece {

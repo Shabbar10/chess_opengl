@@ -34,7 +34,6 @@ std::vector<glm::ivec2> Pawn::getValidMoves(Board &board) {
 
   if (firstMove) {
     potentialMoves.push_back(boardPos + glm::ivec2{0, 2 * moveDirection});
-    firstMove = false;
   }
 
   // x is column, y is row
@@ -94,6 +93,8 @@ void Pawn::render(SpriteSheet &sheet, Shader &shader) {
   sheet.bindQuadVAO();
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
+
+void Pawn::firstMoveFalse() { firstMove = false; }
 
 std::vector<glm::ivec2> Rook::getValidMoves(Board &board) {
   std::vector<glm::ivec2> potentialMoves;

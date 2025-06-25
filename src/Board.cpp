@@ -211,7 +211,6 @@ void Board::handleClick(float x, float y) {
         std::cout << *clickedPiece << std::endl;
         highlightedSquares = clickedPiece->getValidMoves(*this);
         highlighted = true;
-        whiteTurn = !whiteTurn;
       } else {
         std::string turn = whiteTurn ? "White's" : "Black's";
         std::cout << "It is " << turn << " turn\n";
@@ -250,6 +249,10 @@ void Board::movePiece(glm::ivec2 from, glm::ivec2 to) {
   grid[to.y][to.x] = grid[from.y][from.x];
   grid[from.y][from.x] = nullptr;
   movingPiece->setBoardPos(to);
+  if (movingPiece->getType() == PieceType::Pawn) {
+    dynamic_cast<Pawn *>(movingPiece)->firstMoveFalse();
+  }
+  whiteTurn = !whiteTurn;
 }
 
 bool Board::checkIfWon() { return hasWon; }
