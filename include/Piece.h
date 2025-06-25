@@ -10,14 +10,24 @@ class Shader;
 
 enum class PieceType { Pawn, Knight, Rook, Bishop, Queen, King };
 
+struct PieceAnimation {
+  glm::vec2 startPos;
+  glm::vec2 targetPos;
+  float startTime;
+  bool isAnimating = false;
+};
+
 class Piece {
 protected:
   glm::ivec2 boardPos;
+  glm::vec2 currentPos; // In floats for animation
   bool isWhite;
   PieceType type;
   float u0, v0, u1, v1;
 
 public:
+  PieceAnimation animation;
+
   Piece(glm::ivec2 pos, bool white, PieceType type, SpriteSheet &sheet);
   virtual ~Piece() = default;
   virtual std::vector<glm::ivec2> getValidMoves(Board &board) = 0;

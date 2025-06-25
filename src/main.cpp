@@ -89,11 +89,17 @@ int main() {
   pieceShader.setInt("uTexture", 0);
   pieceShader.setMat4("uProjection", projection);
 
+  float lastFrame = 0.0f;
+
   while (!glfwWindowShouldClose(window)) {
     processInput(window);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    float currentTime = glfwGetTime();
+    float deltaTime = currentTime - lastFrame;
+    lastFrame = currentTime;
 
     boardShader.use();
     board.render(blackSheet, whiteSheet, pieceShader, projection);

@@ -1,13 +1,16 @@
+// clang-format off
+#include <glad/glad.h>
+#include "GLFW/glfw3.h"
+// clang-format on
+
 #include "Board.h"
 #include "Piece.h"
 #include "Shader.h"
 #include "SpriteSheet.h"
 #include <algorithm>
-#include <glad/glad.h>
 #include <memory>
 
 Board::Board() {
-
   generateVertices();
 
   glGenBuffers(1, &VBO);
@@ -248,7 +251,16 @@ void Board::movePiece(glm::ivec2 from, glm::ivec2 to) {
 
   grid[to.y][to.x] = grid[from.y][from.x];
   grid[from.y][from.x] = nullptr;
+
+  movingPiece->animation.startPos =
+      glm::vec2(from.x, 7 - from.y) * (float)squareSize;
+  movingPiece->animation.targetPos =
+      glm::vec2(to.x, 7 - to.y) * (float)squareSize;
+  movingPiece->animation.startTime = glfwGetTime();
+  movingPiece->animation.isAnimating = true;
+
   movingPiece->setBoardPos(to);
+
   if (movingPiece->getType() == PieceType::Pawn) {
     dynamic_cast<Pawn *>(movingPiece)->firstMoveFalse();
   }

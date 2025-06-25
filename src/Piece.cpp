@@ -1,6 +1,10 @@
+// clang-format off
+#include "Shader.h"
+#include "GLFW/glfw3.h"
+// clang-format on
+
 #include "Piece.h"
 #include "Board.h"
-#include "Shader.h"
 #include "SpriteSheet.h"
 #include <algorithm>
 #include <cstdint>
@@ -74,8 +78,24 @@ std::vector<glm::ivec2> Pawn::getValidMoves(Board &board) {
 
 void Pawn::render(SpriteSheet &sheet, Shader &shader) {
   // Calculate screen space coordinates
-  float screenX = boardPos.x * SQUARE_SIZE;
-  float screenY = (7 - boardPos.y) * SQUARE_SIZE;
+  // float screenX = boardPos.x * SQUARE_SIZE;
+  // float screenY = (7 - boardPos.y) * SQUARE_SIZE;
+  float screenX, screenY;
+
+  if (animation.isAnimating) {
+    float t = glm::clamp((float)(glfwGetTime() - animation.startTime) / 0.3f,
+                         0.0f, 1.0f);
+    glm::vec2 interpolated =
+        glm::mix(animation.startPos, animation.targetPos, t);
+    screenX = interpolated.x;
+    screenY = interpolated.y;
+
+    if (t >= 1.0)
+      animation.isAnimating = false;
+  } else {
+    screenX = boardPos.x * SQUARE_SIZE;
+    screenY = (7 - boardPos.y) * SQUARE_SIZE;
+  }
 
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation and scaling (because pixels)
