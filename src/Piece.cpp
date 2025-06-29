@@ -130,10 +130,16 @@ std::vector<glm::ivec2> Rook::getValidMoves(Board &board) {
     if (!piece) {
       potentialMoves.push_back(move);
     } else {
-      // If white passing over white
-      if (isWhite && board.getPieceAt(move.x, move.y)->checkifWhite())
+      bool targetIsWhite = board.getPieceAt(move.x, move.y)->checkifWhite();
+
+      if (isWhite && targetIsWhite)
         break;
-      else if (isWhite && !board.getPieceAt(move.x, move.y)->checkifWhite()) {
+      else if (isWhite && !targetIsWhite) {
+        potentialMoves.push_back(move);
+        break;
+      } else if (!isWhite && !targetIsWhite)
+        break;
+      else if (!isWhite && targetIsWhite) {
         potentialMoves.push_back(move);
         break;
       }
@@ -210,6 +216,21 @@ void Rook::render(SpriteSheet &sheet, Shader &shader) {
   // Calculate screen space coordinates
   float screenX = boardPos.x * SQUARE_SIZE;
   float screenY = (7 - boardPos.y) * SQUARE_SIZE;
+
+  if (animation.isAnimating) {
+    float t = glm::clamp((float)(glfwGetTime() - animation.startTime) / 0.3f,
+                         0.0f, 1.0f);
+    glm::vec2 interpolated =
+        glm::mix(animation.startPos, animation.targetPos, t);
+    screenX = interpolated.x;
+    screenY = interpolated.y;
+
+    if (t >= 1.0)
+      animation.isAnimating = false;
+  } else {
+    screenX = boardPos.x * SQUARE_SIZE;
+    screenY = (7 - boardPos.y) * SQUARE_SIZE;
+  }
 
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation and scaling (because pixels)
@@ -341,6 +362,21 @@ void Bishop::render(SpriteSheet &sheet, Shader &shader) {
   float screenX = boardPos.x * SQUARE_SIZE;
   float screenY = (7 - boardPos.y) * SQUARE_SIZE;
 
+  if (animation.isAnimating) {
+    float t = glm::clamp((float)(glfwGetTime() - animation.startTime) / 0.3f,
+                         0.0f, 1.0f);
+    glm::vec2 interpolated =
+        glm::mix(animation.startPos, animation.targetPos, t);
+    screenX = interpolated.x;
+    screenY = interpolated.y;
+
+    if (t >= 1.0)
+      animation.isAnimating = false;
+  } else {
+    screenX = boardPos.x * SQUARE_SIZE;
+    screenY = (7 - boardPos.y) * SQUARE_SIZE;
+  }
+
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation and scaling (because pixels)
   glm::mat4 model = glm::translate(
@@ -430,6 +466,21 @@ void Knight::render(SpriteSheet &sheet, Shader &shader) {
   // Calculate screen space coordinates
   float screenX = boardPos.x * SQUARE_SIZE;
   float screenY = (7 - boardPos.y) * SQUARE_SIZE;
+
+  if (animation.isAnimating) {
+    float t = glm::clamp((float)(glfwGetTime() - animation.startTime) / 0.3f,
+                         0.0f, 1.0f);
+    glm::vec2 interpolated =
+        glm::mix(animation.startPos, animation.targetPos, t);
+    screenX = interpolated.x;
+    screenY = interpolated.y;
+
+    if (t >= 1.0)
+      animation.isAnimating = false;
+  } else {
+    screenX = boardPos.x * SQUARE_SIZE;
+    screenY = (7 - boardPos.y) * SQUARE_SIZE;
+  }
 
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation and scaling (because pixels)
@@ -643,6 +694,21 @@ void Queen::render(SpriteSheet &sheet, Shader &shader) {
   float screenX = boardPos.x * SQUARE_SIZE;
   float screenY = (7 - boardPos.y) * SQUARE_SIZE;
 
+  if (animation.isAnimating) {
+    float t = glm::clamp((float)(glfwGetTime() - animation.startTime) / 0.3f,
+                         0.0f, 1.0f);
+    glm::vec2 interpolated =
+        glm::mix(animation.startPos, animation.targetPos, t);
+    screenX = interpolated.x;
+    screenY = interpolated.y;
+
+    if (t >= 1.0)
+      animation.isAnimating = false;
+  } else {
+    screenX = boardPos.x * SQUARE_SIZE;
+    screenY = (7 - boardPos.y) * SQUARE_SIZE;
+  }
+
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation and scaling (because pixels)
   glm::mat4 model = glm::translate(
@@ -703,6 +769,21 @@ void King::render(SpriteSheet &sheet, Shader &shader) {
   // Calculate screen space coordinates
   float screenX = boardPos.x * SQUARE_SIZE;
   float screenY = (7 - boardPos.y) * SQUARE_SIZE;
+
+  if (animation.isAnimating) {
+    float t = glm::clamp((float)(glfwGetTime() - animation.startTime) / 0.3f,
+                         0.0f, 1.0f);
+    glm::vec2 interpolated =
+        glm::mix(animation.startPos, animation.targetPos, t);
+    screenX = interpolated.x;
+    screenY = interpolated.y;
+
+    if (t >= 1.0)
+      animation.isAnimating = false;
+  } else {
+    screenX = boardPos.x * SQUARE_SIZE;
+    screenY = (7 - boardPos.y) * SQUARE_SIZE;
+  }
 
   // Now to place the pieces in the correct world coordinates, we need a model
   // matrix for translation and scaling (because pixels)

@@ -7,6 +7,7 @@
 #include "Piece.h"
 #include "Shader.h"
 #include "SpriteSheet.h"
+#include <Tracy/tracy/Tracy.hpp>
 #include <algorithm>
 #include <memory>
 
@@ -193,6 +194,8 @@ void Board::renderHighlightedSquares(glm::mat4 projection) {
 }
 
 void Board::handleClick(float x, float y) {
+  ZoneScoped;
+
   int gridCol = x / squareSize, gridRow = y / squareSize;
 
   if (highlighted) {
