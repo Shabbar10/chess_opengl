@@ -11,6 +11,7 @@ private:
 
 public:
   SpriteSheet(const std::string &path);
+  ~SpriteSheet();
   std::tuple<float, float, float, float> getUV(unsigned int position);
   void initQuad();
   void bind();

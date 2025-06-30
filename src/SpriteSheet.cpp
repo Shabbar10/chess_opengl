@@ -84,3 +84,10 @@ void SpriteSheet::initQuad() {
 
   glBindVertexArray(0);
 }
+
+SpriteSheet::~SpriteSheet() {
+  glDeleteVertexArrays(1, &quadVAO);
+  glDeleteBuffers(1, &quadVBO);
+  glDeleteBuffers(1, &quadEBO);
+  glDeleteTextures(1, &textureID);
+}
