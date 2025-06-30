@@ -6,5 +6,5 @@ in vec2 fragPos;
 out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(vColor, 0.1);
+    FragColor = vec4(vColor, 0.8);
 }

@@ -5,9 +5,20 @@
 #include <memory>
 #include <vector>
 
+enum class GameState { Playing, PromotionPending, OwariDa };
+
 class Piece;
+class Pawn;
 class SpriteSheet;
 class Shader;
+
+enum class PieceType;
+
+struct PromotionQuad {
+  glm::vec2 min;
+  glm::vec2 max;
+  PieceType type;
+};
 
 class Board {
 private:
@@ -28,9 +39,29 @@ private:
   bool hasWon = false;
   bool whiteTurn = true;
 
+  GameState gameState = GameState::Playing;
+  std::unique_ptr<Shader> dimShader;
+  unsigned int dimVBO, dimEBO, dimVAO;
+  std::unique_ptr<Shader> promotionShader;
+  unsigned int promoteVBO, promoteEBO, promoteVAO;
+  std::unique_ptr<Shader> promotionPiecesShader;
+  unsigned int pieceVBO, pieceEBO, pieceVAO;
+  std::vector<PromotionQuad> pQuads;
+  SpriteSheet *promotedPawnSheet;
+  PieceType promoteTo;
+  glm::vec2 movingTo;
+  Piece *promotedPawn;
+
   void generateVertices();
   void renderHighlightedSquares(glm::mat4 projection);
+  void renderDimWindow();
+  void renderPromotionOverlay();
+  void renderPromotionPieces();
   void initializeHighlightBuffers();
+  void initializeDimBuffers();
+  void initializePromotionBuffers();
+  void initializePromotionPiecesBuffers();
+  void changePiece();
 
 public:
   Board();
@@ -40,7 +71,9 @@ public:
                        SpriteSheet &whiteSheet); // place pieces initially
   Piece *getPieceAt(int x, int y) const;
   void handleClick(float x, float y);
+  void handlePromotionClick(float x, float y);
   void movePiece(glm::ivec2 from, glm::ivec2 to);
   bool isOutOfBounds(const glm::ivec2 &move);
   bool checkIfWon();
+  GameState getGameState();
 };

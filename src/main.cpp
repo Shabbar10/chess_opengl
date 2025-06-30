@@ -51,6 +51,9 @@ int main() {
     return -1;
   }
 
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 #ifdef _WIN32
   Shader ourShader("src\\vShader.vert", "src\\fShader.frag");
 #else
@@ -69,8 +72,13 @@ int main() {
           glfwGetCursorPos(win, &x, &y);
 
           Board *board = static_cast<Board *>(glfwGetWindowUserPointer(win));
-          if (board)
-            board->handleClick(static_cast<float>(x), static_cast<float>(y));
+          if (board) {
+            if (board->getGameState() == GameState::Playing)
+              board->handleClick(static_cast<float>(x), static_cast<float>(y));
+            else if (board->getGameState() == GameState::PromotionPending)
+              board->handlePromotionClick(static_cast<float>(x),
+                                          static_cast<float>(y));
+          }
         }
       });
 

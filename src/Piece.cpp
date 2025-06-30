@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <glm/gtc/matrix_transform.hpp>
+#include <print>
 #include <tuple>
 
 #define SQUARE_SIZE 100
@@ -16,6 +17,7 @@
 Piece::Piece(glm::ivec2 pos, bool white, PieceType type, SpriteSheet &sheet)
     : boardPos(pos), isWhite(white), type(type) {
   std::tie(u0, v0, u1, v1) = sheet.getUV(static_cast<int>(type));
+  this->sheet = &sheet;
 }
 
 bool Piece::checkifWhite() { return isWhite; }
@@ -25,6 +27,20 @@ glm::ivec2 Piece::getBoardPos() { return boardPos; }
 void Piece::setBoardPos(const glm::ivec2 to) { boardPos = to; }
 
 PieceType Piece::getType() { return type; }
+
+SpriteSheet *Piece::getSheet() const { return sheet; }
+
+int Pawn::promotion() {
+  int promotionType;
+  std::println("Promotion to what?");
+  std::println("1. Bishop");
+  std::println("2. Rook");
+  std::println("3. Knight");
+  std::println("4. Queen");
+  std::cin >> promotionType;
+
+  return promotionType;
+}
 
 std::vector<glm::ivec2> Pawn::getValidMoves(Board &board) {
   int8_t moveDirection = isWhite ? -1 : 1;

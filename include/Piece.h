@@ -24,6 +24,7 @@ protected:
   bool isWhite;
   PieceType type;
   float u0, v0, u1, v1;
+  SpriteSheet *sheet;
 
 public:
   PieceAnimation animation;
@@ -36,6 +37,7 @@ public:
   glm::ivec2 getBoardPos();
   void setBoardPos(const glm::ivec2 to);
   PieceType getType();
+  SpriteSheet *getSheet() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Piece &piece) {
     os << "Piece Type: " << static_cast<int>(piece.type) << ", Position: ("
@@ -57,6 +59,7 @@ public:
   std::vector<glm::ivec2> getValidMoves(Board &board) override;
   void render(SpriteSheet &sheet, Shader &shader) override;
   void firstMoveFalse();
+  int promotion();
 };
 
 class Rook : public Piece {
