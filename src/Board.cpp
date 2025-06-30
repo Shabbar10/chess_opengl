@@ -466,6 +466,8 @@ GameState Board::getGameState() { return gameState; }
 void Board::changePiece() {
   Pawn *p = dynamic_cast<Pawn *>(promotedPawn);
 
+  delete grid[movingTo.y][movingTo.x];
+
   switch (promoteTo) {
   case PieceType::Bishop: {
     grid[movingTo.y][movingTo.x] =
@@ -496,4 +498,33 @@ void Board::changePiece() {
     break;
   }
   }
+
+  promotedPawn = nullptr;
+}
+
+Board::~Board() {
+  for (auto &row : grid)
+    for (auto &piece : row)
+      if (piece)
+        delete piece;
+
+  glDeleteBuffers(1, &VBO);
+  glDeleteBuffers(1, &EBO);
+  glDeleteVertexArrays(1, &VAO);
+
+  glDeleteBuffers(1, &highlightVBO);
+  glDeleteBuffers(1, &highlightEBO);
+  glDeleteVertexArrays(1, &highlightVAO);
+
+  glDeleteBuffers(1, &dimVBO);
+  glDeleteBuffers(1, &dimEBO);
+  glDeleteVertexArrays(1, &dimVAO);
+
+  glDeleteBuffers(1, &promoteVBO);
+  glDeleteBuffers(1, &promoteEBO);
+  glDeleteVertexArrays(1, &promoteVAO);
+
+  glDeleteBuffers(1, &pieceVBO);
+  glDeleteBuffers(1, &pieceEBO);
+  glDeleteVertexArrays(1, &pieceVAO);
 }

@@ -65,6 +65,7 @@ private:
 
 public:
   Board();
+  ~Board();
   void render(SpriteSheet &blackSheet, SpriteSheet &whiteSheet, Shader &shader,
               glm::mat4 projection);
   void initializeBoard(SpriteSheet &blackSheet,
