@@ -107,8 +107,8 @@ void Board::initializeHighlightBuffers() {
 
   glBindVertexArray(0);
 
-  highlightShader =
-      std::make_unique<Shader>("src/highlight.vert", "src/highlight.frag");
+  highlightShader = std::make_unique<Shader>("res/shaders/highlight.vert",
+                                             "res/shaders/highlight.frag");
 }
 
 void Board::initializeDimBuffers() {
@@ -139,8 +139,8 @@ void Board::initializeDimBuffers() {
 
   glBindVertexArray(0);
 
-  dimShader =
-      std::make_unique<Shader>("src/dimWindow.vert", "src/dimWindow.frag");
+  dimShader = std::make_unique<Shader>("res/shaders/dimWindow.vert",
+                                       "res/shaders/dimWindow.frag");
 }
 
 void Board::initializePromotionBuffers() {
@@ -170,8 +170,8 @@ void Board::initializePromotionBuffers() {
 
   glBindVertexArray(0);
 
-  promotionShader =
-      std::make_unique<Shader>("src/promotion.vert", "src/promotion.frag");
+  promotionShader = std::make_unique<Shader>("res/shaders/promotion.vert",
+                                             "res/shaders/promotion.frag");
 }
 
 void Board::initializePromotionPiecesBuffers() {
@@ -233,8 +233,8 @@ void Board::initializePromotionPiecesBuffers() {
 
   glBindVertexArray(0);
 
-  promotionPiecesShader = std::make_unique<Shader>("src/promotionPiece.vert",
-                                                   "src/promotionPiece.frag");
+  promotionPiecesShader = std::make_unique<Shader>(
+      "res/shaders/promotionPiece.vert", "res/shaders/promotionPiece.frag");
 }
 
 void Board::initializeBoard(SpriteSheet &blackSheet, SpriteSheet &whiteSheet) {

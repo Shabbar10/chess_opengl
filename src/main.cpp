@@ -57,8 +57,8 @@ int main() {
 #ifdef _WIN32
   Shader ourShader("src\\vShader.vert", "src\\fShader.frag");
 #else
-  Shader boardShader("src/vShader.vert", "src/fShader.frag");
-  Shader pieceShader("src/piece.vert", "src/piece.frag");
+  Shader boardShader("res/shaders/vShader.vert", "res/shaders/fShader.frag");
+  Shader pieceShader("res/shaders/piece.vert", "res/shaders/piece.frag");
 #endif
 
   Board board;
