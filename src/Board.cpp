@@ -7,7 +7,6 @@
 #include "Piece.h"
 #include "Shader.h"
 #include "SpriteSheet.h"
-#include <Tracy/tracy/Tracy.hpp>
 #include <algorithm>
 #include <memory>
 #include <print>

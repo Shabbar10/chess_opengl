@@ -10,7 +10,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
-  /usr/include/Tracy
 )
 
 add_executable(${PROJECT_NAME}
@@ -23,9 +22,11 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-  GL
+  "-framework OpenGL"
+  "-framework Cocoa"
+  "-framework IOKit"
+  "-framework CoreFoundation"
   ${PROJECT_SOURCE_DIR}/lib/libglfw3.a
-  /usr/lib/libTracyClient.a
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:DEBUG>:TRACY_ENABLE>)
